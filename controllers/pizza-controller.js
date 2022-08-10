@@ -6,6 +6,14 @@ const pizzaController = {
   getAllPizza(req, res) {
     // referencing the Pizza model using the mongoose 'find' method
     Pizza.find({})
+        // populate the comments with the commentBody, not just commentId
+        .populate({
+            path: 'comments',
+            select: '-__v' // - minus the version field
+        })
+        .select('-__v')
+        // mongoose sort method, descending by id aka newest first
+        .sort({ _id: -1 })
         .then(dbPizzaData => res.json(dbPizzaData))
         .catch(err => {
             console.log(err);

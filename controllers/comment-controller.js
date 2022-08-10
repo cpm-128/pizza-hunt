@@ -7,7 +7,7 @@ const commentController = {
         console.log('>> add comment body >>', body);
         Comment.create(body)
             .then(({ _id }) => {
-             console.log('>> pizza? id >>', _id)
+             console.log('>> comment id >>', _id)
              return Pizza.findOneAndUpdate(
                 { _id: params.pizzaId },
                 { $push: { comments: _id } },
