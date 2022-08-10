@@ -40,6 +40,7 @@ const pizzaController = {
   // PUT UPDATE single pizza by id
   updatePizza({ params, body }, res) {
     // new: true is necessary to return the updated document. else, returns original
+    // where clause must be first (id), then the updated data (body)
     Pizza.findOneAndUpdate({ _id: params.id }, body, { new: true })
         .then(dbPizzaData => {
             if (!dbPizzaData) {
