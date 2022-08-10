@@ -24,6 +24,12 @@ const pizzaController = {
   // GET single pizza by id method
   getPizzaById({ params }, res) {
     Pizza.findOne({ _id: params.id })
+        // populate the comment with commentBody
+        .populate({
+            path: 'comments',
+            select: '-__v'
+        })
+        .select('-__v')
         .then(dbPizzaData => {
             // if no pizza, send 404 error
             if (!dbPizzaData) {
