@@ -1,4 +1,4 @@
-const router = require('express').Routes();
+const router = require('express').Router();
 
 // import the controller methods
 const {
