@@ -46,10 +46,16 @@ const CommentSchema = new Schema(
     },
     {
         toJSON: {
+            virtuals: true,
             getters: true
         }
     }
 );
+
+// VIRTUAL: total count of replies per comment
+CommentSchema.virtual('replyCount').get(function() {
+    return this.replies.length;
+});
 
 const Comment = model('Comment', CommentSchema);
 
