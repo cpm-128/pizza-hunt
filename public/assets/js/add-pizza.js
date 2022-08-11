@@ -68,6 +68,9 @@ const handlePizzaSubmit = event => {
     })
     .catch(err => {
       console.log(err);
+      // if error, work offline
+      // the idb.js function is available through the public/js script on the html page
+      saveRecord(formData);
     });
 };
 
