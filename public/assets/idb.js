@@ -21,9 +21,9 @@ request.onsuccess = function(event) {
     // store offline db object to global db var define earlier
     db = event.target.result;
 
-    // check if app is online
+    // check if app is online when a user returns
     if (navigator.online) {
-        //uploadPizza();
+        uploadPizza();
     }
 };
 
@@ -42,3 +42,49 @@ function saveRecord(record) {
     // add record to store
     pizzaObjectStore.add(record);
 }
+
+// POST the saved pizza object(s) to the server so it can be uploaded with connection is reestablished
+function uploadPizza() {
+    // open a transaction on db
+    const transaction = db.transaction(['new_pizza'], 'readwrite');
+
+    // access the object store
+    const pizzaObjectStore = transaction.objectStore('new_pizza');
+
+    // get all records from store and set to variable
+    const getAll = pizzaObjectStore.getAll();
+
+    // getAll success
+    getAll.onsuccess = function() {
+        // if data in store, send to api server
+        if (getAll.result.length > 0) {
+            fetch('/api/pizzas', {
+                method: 'POST',
+                body: JSON.stringify(getAll.result),
+                headers: {
+                    Accpetion: 'application/json, text/plain, */*',
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(serverResponse => {
+                    if (serverResponse.message) {
+                        throw new Error(serverResponse)
+                    }
+                    // open one more transaction
+                    const transaction = db.transaction(['new_pizza'], 'readwrite');
+                    // access the new_pizza object store
+                    const pizzaObjectStore = transaction.objectStore('new_pizza');
+                    // clear all items in store
+                    pizzaObjectStore.clear();
+                    alert('All saved pizza has been submitted.');
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        }
+    };
+};
+
+// listen to app coming back online during the same session
+window.addEventListener('online', uploadPizza);
