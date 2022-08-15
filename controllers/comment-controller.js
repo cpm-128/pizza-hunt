@@ -73,7 +73,6 @@ const commentController = {
                 }
                 res.json(dbPizzaData);
             })
-            //TODO: something here has to move
             .catch(err => res.json(err));
     }
 
